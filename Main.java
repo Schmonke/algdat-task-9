@@ -7,39 +7,46 @@ import java.util.Scanner;
 
 public class Main {
     
-    public static void parseNodeFile(Graph graph, String path, Scanner scanner) {
+    public static void parseNodeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfNodes = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = new Node[numberOfNodes];
+        Node[] invertedNodes = nodes.clone();
 
         int number;
         double latt;
         double longt;
-        Node node;
 
         for (int i = 0; i < numberOfNodes; i++) {
             number = scanner.nextInt();
             latt = scanner.nextDouble();
             longt = scanner.nextDouble();
 
-            node = new Node(number, null, false, Integer.MAX_VALUE, latt, longt, new LinkedList<Edge>());
-            nodes[i] = node;
+            nodes[i] = new Node(number, null, false, Integer.MAX_VALUE, latt, longt, new LinkedList<Edge>());
+            invertedNodes[i] = new Node(number, null, false, Integer.MAX_VALUE, latt, longt, new LinkedList<Edge>());
         }
 
         graph.setNodes(nodes);
+        invertedGraph.setNodes(invertedNodes);
     }
 
-    public static void parseEdgeFile(Graph graph, String path, Scanner scanner) {
+    // "This will be easy"
+    // - Magnus 2021-11-14T19:14
+
+    // Tis Was Easyz
+
+    public static void parseEdgeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfEdges = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = graph.getNodes();
-
+        Node[] invertedNodes = invertedGraph.getNodes();
         int fromNodeNumber;
         int toNodeNumber;
         int drivetime;
         int length;
         int speedlimit;
         Edge edge;
+        Edge invertedEdge;
 
         for (int i = 0; i < numberOfEdges; i++) {
             fromNodeNumber = scanner.nextInt();
@@ -49,7 +56,10 @@ public class Main {
             speedlimit = scanner.nextInt();
 
             edge = new Edge(nodes[toNodeNumber], drivetime, length, speedlimit);
+            invertedEdge = new Edge(invertedNodes[fromNodeNumber], drivetime, length, speedlimit);
+            
             nodes[fromNodeNumber].getEdges().add(edge);
+            invertedNodes[toNodeNumber].getEdges().add(invertedEdge);
         }
     }
 
@@ -68,9 +78,12 @@ public class Main {
         }
 
         Graph graph = new Graph();
-        parseNodeFile(graph, nodefilePath, nodeScanner);
-        parseEdgeFile(graph, edgefilePath, edgeScanner);
+        Graph invertedGraph = new Graph();
+        parseNodeFile(graph, invertedGraph, nodefilePath, nodeScanner);
+        parseEdgeFile(graph, invertedGraph, edgefilePath, edgeScanner);
 
+        Dijkstra dijkstra = new Dijkstra(graph.getNodes(), 0, 9);
+        System.out.println(dijkstra.search());
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
     }
 }

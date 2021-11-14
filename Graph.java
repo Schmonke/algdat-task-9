@@ -16,6 +16,4 @@ public class Graph {
     public void setNodes(Node[] nodes) {
         this.nodes = nodes;
     }
-
-
 }

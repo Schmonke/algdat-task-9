@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.function.Supplier;
 
 public class Dijkstra {
     private Node[] nodes;
@@ -14,31 +15,12 @@ public class Dijkstra {
     public Dijkstra(Node[] nodes, int startnodeNumber, int endnodeNumber) {
         this.nodes = nodes;
         this.startnodeNumber = startnodeNumber;
-        this.startnodeNumber = startnodeNumber;
         this.startnode = nodes[startnodeNumber];
-        this.endnode = nodes[endnodeNumber];
+        this.endnode = endnodeNumber == -1 ? null : nodes[endnodeNumber];
         this.queue = new PriorityQueue<>(nodes.length, new DistanceComparator());
+        startnode.setDistance(0);
         //Arrays.stream(graph.getNodes()).forEach(node -> this.queue.add(node));
     }
-
-    // class DijkstraNode extends Node {
-    //     private int lengthToStartNode;
-
-    //     public DijkstraNode(int number, double latitude, double longitude, LinkedList<Edge> edges) {
-    //         super(number, latitude, longitude, edges);
-    //         this.lengthToStartNode = 0;
-    //     }
-
-    //     public int getLengthToStartNode() {
-    //         return lengthToStartNode;
-    //     }
-
-    //     public void setLengthToStartNode(int lengthToStartNode) {
-    //         this.lengthToStartNode = lengthToStartNode;
-    //     }
-        
-        
-    // }
 
     class DistanceComparator implements Comparator<Node> {
         @Override
@@ -58,21 +40,25 @@ public class Dijkstra {
     // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
     public int search() {
+        queue = new PriorityQueue<>(nodes.length, new DistanceComparator());
         startnode.getEdges().forEach(edge -> {
             Node toNode = edge.getTo();
             toNode.setDistance(edge.getLength());
             queue.add(toNode);
         });
 
-        int i = 0;
-        while (!endnode.isVisited()) {
-            //if (i == startnodeNumber) continue;
+        Supplier<Boolean> condition = endnode == null
+            ? () -> !queue.isEmpty()
+            : () -> !endnode.isVisited();
+
+        while (condition.get()) {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
-            polledNode.setVisited(true);
+
             polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
                 Node toNode = edge.getTo();
                 int newDistance = polledNode.getDistance() + edge.getLength();
-                if (newDistance < toNode.getDistance()) {
+                //look for the shortest path
+                if(toNode.getDistance()==Integer.MAX_VALUE || toNode.getDistance()>newDistance){
                     toNode.setDistance(newDistance);
                     toNode.setPrevious(polledNode);
                 }
@@ -81,8 +67,8 @@ public class Dijkstra {
                 }
             });
             polledNode.setVisited(true);
-            i++;
         }
+        System.out.println(endnode.getNumber());
         return endnode.getDistance();
     }
 }

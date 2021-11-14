@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Main {
     
-    public static void nodefileParser(Graph graph, String path, Scanner scanner) {
+    public static void parseNodeFile(Graph graph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfNodes = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = new Node[numberOfNodes];
@@ -29,7 +29,7 @@ public class Main {
         graph.setNodes(nodes);
     }
 
-    public static void edgefileParser(Graph graph, String path, Scanner scanner) {
+    public static void parseEdgeFile(Graph graph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfEdges = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = graph.getNodes();
@@ -64,13 +64,12 @@ public class Main {
             nodeScanner = new Scanner(new File(nodefilePath));
             edgeScanner = new Scanner(new File(edgefilePath));
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         Graph graph = new Graph();
-        Main.nodefileParser(graph, nodefilePath, nodeScanner);
-        Main.edgefileParser(graph, edgefilePath, edgeScanner);
+        parseNodeFile(graph, nodefilePath, nodeScanner);
+        parseEdgeFile(graph, edgefilePath, edgeScanner);
 
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
     }

@@ -1,6 +1,10 @@
 public class Graph {
     private Node[] nodes;
 
+    public Graph() {
+        
+    }
+
     public Graph(Node[] nodes) {
         this.nodes = nodes;
     }

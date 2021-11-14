@@ -61,6 +61,8 @@ public class Node {
     public void setEdges(LinkedList<Edge> edges) {
         this.edges = edges;
     }
-    
-    
+    @Override
+    public String toString() {
+        return "Node [" + number + "]";
+    }
 }

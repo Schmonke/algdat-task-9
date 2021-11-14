@@ -42,4 +42,10 @@ public class Edge {
     public void setSpeedlimit(int speedlimit) {
         this.speedlimit = speedlimit;
     }
+
+    @Override
+    public String toString() {
+        return "Edge [drivetime=" + drivetime + ", length=" + length + ", speedlimit=" + speedlimit + ", to=" + to
+                + "]";
+    }
 }

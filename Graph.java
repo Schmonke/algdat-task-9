@@ -1,4 +1,6 @@
-public class Graph {
+import java.io.Serializable;
+
+public class Graph implements Serializable {
     private Node[] nodes;
 
     public Graph() {

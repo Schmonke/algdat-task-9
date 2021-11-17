@@ -1,23 +1,23 @@
+import java.beans.Transient;
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Node {
+public class Node implements Serializable {
     private int number;
-    private Node previous;
-    private boolean visited;
     private LinkedList<Edge> edges;
     private int distance;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
 
-    public Node(int number, Node previous, boolean visited, int distance, double latitude, double longitude,
-            LinkedList<Edge> edges) {
+    private transient Node previous;
+    private transient boolean visited;
+    private transient boolean enqueued;
+
+    public Node(int number, double latitude, double longitude) {
         this.number = number;
-        this.previous = previous;
-        this.visited = visited;
-        this.distance = distance;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.edges = edges;
+        this.edges = new LinkedList<Edge>();
     }
     public int getNumber() {
         return number;
@@ -30,6 +30,12 @@ public class Node {
     }
     public void setPrevious(Node previous) {
         this.previous = previous;
+    }
+    public boolean isEnqueued() {
+        return enqueued;
+    }
+    public void setEnqueued(boolean enqueued) {
+        this.enqueued = enqueued;
     }
     public boolean isVisited() {
         return visited;

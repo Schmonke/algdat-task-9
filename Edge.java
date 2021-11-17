@@ -1,22 +1,24 @@
-public class Edge {
-    private Node to;
+import java.io.Serializable;
+
+public class Edge implements Serializable {
+    private int toNodeNumber;
     private int drivetime;
     private int length;
     private int speedlimit;
     
-    public Edge(Node to, int drivetime, int length, int speedlimit) {
-        this.to = to;
+    public Edge(int toNodeNumber, int drivetime, int length, int speedlimit) {
+        this.toNodeNumber = toNodeNumber;
         this.drivetime = drivetime;
         this.length = length;
         this.speedlimit = speedlimit;
     }
 
-    public Node getTo() {
-        return to;
+    public int getToNodeNumber() {
+        return toNodeNumber;
     }
 
-    public void setTo(Node to) {
-        this.to = to;
+    public void setToNodeNumber(int toNodeNumber) {
+        this.toNodeNumber = toNodeNumber;
     }
 
     public int getDrivetime() {
@@ -45,7 +47,7 @@ public class Edge {
 
     @Override
     public String toString() {
-        return "Edge [drivetime=" + drivetime + ", length=" + length + ", speedlimit=" + speedlimit + ", to=" + to
+        return "Edge [drivetime=" + drivetime + ", length=" + length + ", speedlimit=" + speedlimit + ", to=" + toNodeNumber
                 + "]";
     }
 }

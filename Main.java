@@ -22,8 +22,8 @@ public class Main {
             latt = scanner.nextDouble();
             longt = scanner.nextDouble();
 
-            nodes[i] = new Node(number, null, false, Integer.MAX_VALUE, latt, longt, new LinkedList<Edge>());
-            invertedNodes[i] = new Node(number, null, false, Integer.MAX_VALUE, latt, longt, new LinkedList<Edge>());
+            nodes[i] = new Node(number, latt, longt);
+            invertedNodes[i] = new Node(number, latt, longt);
         }
 
         graph.setNodes(nodes);
@@ -55,13 +55,14 @@ public class Main {
             length = scanner.nextInt();
             speedlimit = scanner.nextInt();
 
-            edge = new Edge(nodes[toNodeNumber], drivetime, length, speedlimit);
-            invertedEdge = new Edge(invertedNodes[fromNodeNumber], drivetime, length, speedlimit);
+            edge = new Edge(toNodeNumber, drivetime, length, speedlimit);
+            invertedEdge = new Edge(fromNodeNumber, drivetime, length, speedlimit);
             
             nodes[fromNodeNumber].getEdges().add(edge);
             invertedNodes[toNodeNumber].getEdges().add(invertedEdge);
         }
     }
+    
 
 
     public static void main(String[] args) {
@@ -82,8 +83,8 @@ public class Main {
         parseNodeFile(graph, invertedGraph, nodefilePath, nodeScanner);
         parseEdgeFile(graph, invertedGraph, edgefilePath, edgeScanner);
 
-        Dijkstra dijkstra = new Dijkstra(graph.getNodes(), 0, 9);
-        System.out.println(dijkstra.search());
+        Dijkstra dijkstra = new Dijkstra(graph);
+        dijkstra.search(0, -1);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
     }
 }

@@ -4,10 +4,10 @@ public class Node {
     private int number;
     private Node previous;
     private boolean visited;
+    private LinkedList<Edge> edges;
     private int distance;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
-    private LinkedList<Edge> edges;
 
     public Node(int number, Node previous, boolean visited, int distance, double latitude, double longitude,
             LinkedList<Edge> edges) {

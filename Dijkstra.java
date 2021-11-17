@@ -22,43 +22,35 @@ public class Dijkstra {
         //Arrays.stream(graph.getNodes()).forEach(node -> this.queue.add(node));
     }
 
-    class DistanceComparator implements Comparator<Node> {
-        @Override
-        public int compare(Node o1, Node o2) {
-            return o1.getDistance() - o2.getDistance();
-        }
-    }
-
     class Estimate {
-
+        
     }
 
     public void shorten() {
 
     }
 
+    private boolean continueSearch() {
+        return endnode == null
+            ? queue.isEmpty()
+            : endnode.isVisited();
+    }
+
     // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
     public int search() {
         queue = new PriorityQueue<>(nodes.length, new DistanceComparator());
-        startnode.getEdges().forEach(edge -> {
-            Node toNode = edge.getTo();
-            toNode.setDistance(edge.getLength());
-            queue.add(toNode);
-        });
+        
+        queue.add(startnode);
 
-        Supplier<Boolean> condition = endnode == null
-            ? () -> !queue.isEmpty()
-            : () -> !endnode.isVisited();
-
-        while (condition.get()) {
+        while (continueSearch()) {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
 
             polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
                 Node toNode = edge.getTo();
                 int newDistance = polledNode.getDistance() + edge.getLength();
                 //look for the shortest path
-                if(toNode.getDistance()==Integer.MAX_VALUE || toNode.getDistance()>newDistance){
+                if (toNode.getDistance()>newDistance){
                     toNode.setDistance(newDistance);
                     toNode.setPrevious(polledNode);
                 }
@@ -70,5 +62,12 @@ public class Dijkstra {
         }
         System.out.println(endnode.getNumber());
         return endnode.getDistance();
+    }
+
+    class DistanceComparator implements Comparator<Node> {
+        @Override
+        public int compare(Node o1, Node o2) {
+            return o1.getDistance() - o2.getDistance();
+        }
     }
 }

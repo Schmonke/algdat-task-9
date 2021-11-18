@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -61,9 +63,15 @@ public class Main {
         }
     }
 
-    private static void preprocess(Graph graph, Graph invertedGraph, int[] landmarkNodeNumbers, boolean test) {
+    private static void preprocess(Graph graph, Graph invertedGraph, int[] landmarkNodeNumbers, String path, boolean test) {
         if (test) {
-            new ALTPreprocessor(graph, invertedGraph, landmarkNodeNumbers).preprocess();
+            ALTPreprocessor preprocessor = new ALTPreprocessor(graph, invertedGraph, landmarkNodeNumbers);
+            preprocessor.preprocess(path);
+            ALT alt = new ALT(landmarkNodeNumbers.length, graph.getNodes().length, path);
+            for (int i = 0; i < landmarkNodeNumbers.length; i++) {
+                System.out.print(alt.getFromLandmarkToNode()[i][7] + " ");
+                System.out.println(Arrays.equals(alt.getFromLandmarkToNode()[i], preprocessor.getFromLandmark()[i]));
+            }
         }
     }
 
@@ -85,10 +93,10 @@ public class Main {
         parseNodeFile(graph, invertedGraph, nodefilePath, nodeScanner);
         parseEdgeFile(graph, invertedGraph, edgefilePath, edgeScanner);
 
-        Dijkstra dijkstra = new Dijkstra(graph);
-        dijkstra.search(0, -1);
+        // Dijkstra dijkstra = new Dijkstra(graph);
+        // dijkstra.search(0, -1);
 
-        preprocess(graph, invertedGraph, new int[] {100, 200, 300, 400, 500}, false); //Set true to test
+        preprocess(graph, invertedGraph, new int[] {100, 200, 300, 400, 500}, "./preprocessed_data.txt", true); //Set true to test
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
     }
 }

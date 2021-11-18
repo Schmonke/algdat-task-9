@@ -36,10 +36,12 @@ public class Dijkstra {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
+            if(polledNode.getDistance() == Integer.MAX_VALUE) polledNode.setDistance(0);
 
             polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
                 Node toNode = nodes[edge.getToNodeNumber()];
                 int newDistance = polledNode.getDistance() + edge.getLength();
+                //System.out.println(newDistance);
 
                 //look for the shortest path
                 if (newDistance < toNode.getDistance()) {

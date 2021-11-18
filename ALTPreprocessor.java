@@ -1,12 +1,15 @@
 import java.util.Objects;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public class ALTPreprocessor  {
-    private final Graph graph;
-    private final Graph inverseGraph;
-    private final int[] landmarkNodeNumbers;
+public class ALTPreprocessor implements Serializable {
+    transient private final Graph graph;
+    transient private final Graph inverseGraph;
+    transient private final int[] landmarkNodeNumbers;
 
     private final int[][] fromLandmark;
     private final int[][] toLandmark;
@@ -21,40 +24,51 @@ public class ALTPreprocessor  {
         this.toLandmark = new int[landmarkNodeNumbers.length][graph.getNodes().length];
     }
     
-    private void fillArrayWithDistanceData(Dijkstra dijkstra, Graph graph, int[][] array) {
+    private void fillArrayWithDistanceData(Graph graph, int[][] array) {
+        Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
             dijkstra.search(landmarkNodeNumbers[i], -1);
             Node[] nodes = graph.getNodes();
+            //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {
                 array[i][j] = nodes[j].getDistance();
+                //System.out.println(array[i][j]);
             }
         }
     }
     
-    public void preprocess() {
-        Dijkstra dijkstraForward = new Dijkstra(graph);
-        Dijkstra dijkstraReversed = new Dijkstra(inverseGraph);
+    public void preprocess(String path) {
+        fillArrayWithDistanceData(graph, fromLandmark);
+        fillArrayWithDistanceData(inverseGraph, toLandmark);
 
-        fillArrayWithDistanceData(dijkstraForward, graph, fromLandmark);
-        fillArrayWithDistanceData(dijkstraReversed, inverseGraph, toLandmark);
-
-        
+        dumpToFile(path);
     }
 
     // private boolean readCached() {
         
     // }
     
-    private void dumpToFile(String path) throws IOException {
-        try{
-        java.io.BufferedWriter bufferedWriter = new java.io.BufferedWriter(new FileWriter(path));
-        for(int i = 0; i < fromLandmark.length; i++){ //5 times
-            for(int j = 0; j < toLandmark.length; i++){ //5 times
-                bufferedWriter.write(fromLandmark[i][j]);
+    private void dumpToFile(String path) {
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            objectOutputStream = new ObjectOutputStream(new FileOutputStream(path));
+            objectOutputStream.writeObject(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                objectOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        }catch(IOException e){
-            e.getStackTrace();
-        }
+    }
+
+    public int[][] getFromLandmark() {
+        return fromLandmark;
+    }
+
+    public int[][] getToLandmark() {
+        return toLandmark;
     }
 }

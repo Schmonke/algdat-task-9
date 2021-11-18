@@ -15,7 +15,7 @@ public class Dijkstra {
 
     // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
-    public void search(int startNodeNumber, int endNodeNumber) {
+    public int search(int startNodeNumber, int endNodeNumber) {
         queue.clear();
         for (Node node : graph.getNodes()) {
             node.setDistance(Integer.MAX_VALUE);
@@ -54,7 +54,7 @@ public class Dijkstra {
                     }
                 }
 
-                if (!toNode.isVisited() && !toNode.isEnqueued()) {
+                if (!toNode.isVisited() && !toNode.isEnqueued()) { //Currently doesn't get used at all
                     queue.add(toNode);
                     toNode.setEnqueued(true);
                 }
@@ -64,6 +64,7 @@ public class Dijkstra {
                 break;
             }
         }
+        return endNode.getDistance();
     }
 
     class DistanceComparator implements Comparator<Node> {

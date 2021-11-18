@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -67,17 +68,19 @@ public class Main {
         if (test) {
             ALTPreprocessor preprocessor = new ALTPreprocessor(graph, invertedGraph, landmarkNodeNumbers);
             preprocessor.preprocess(path);
-            ALT alt = new ALT(landmarkNodeNumbers.length, graph.getNodes().length, path);
-            for (int i = 0; i < landmarkNodeNumbers.length; i++) {
-                System.out.print(alt.getFromLandmarkToNode()[i][7] + " ");
-                System.out.println(Arrays.equals(alt.getFromLandmarkToNode()[i], preprocessor.getFromLandmark()[i]));
-            }
+            // ALT alt = new ALT(landmarkNodeNumbers.length, graph.getNodes().length, path);
+            // for (int i = 0; i < landmarkNodeNumbers.length; i++) {
+            //     System.out.print(alt.getFromLandmarkToNode()[i][new Random().nextInt(100000)] + " ");
+            //     System.out.println(Arrays.equals(alt.getFromLandmarkToNode()[i], preprocessor.getFromLandmark()[i]));
+            // }
         }
     }
 
     public static void main(String[] args) {
         String nodefilePath = args[0];
         String edgefilePath = args[1];
+        int[] landmarks = {100, 200, 300, 400, 500};
+        String preprocessedFilePath = "./preprocessed_data.txt";
 
         Scanner nodeScanner = null;
         Scanner edgeScanner = null;
@@ -93,10 +96,15 @@ public class Main {
         parseNodeFile(graph, invertedGraph, nodefilePath, nodeScanner);
         parseEdgeFile(graph, invertedGraph, edgefilePath, edgeScanner);
 
-        // Dijkstra dijkstra = new Dijkstra(graph);
-        // dijkstra.search(0, -1);
-
-        preprocess(graph, invertedGraph, new int[] {100, 200, 300, 400, 500}, "./preprocessed_data.txt", true); //Set true to test
+        Dijkstra dijkstra = new Dijkstra(graph);
+        int dijkstraDistance = dijkstra.search(0, 15);
+        System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
+
+        //preprocess(graph, invertedGraph, landmarks, preprocessedFilePath, false); //Set true to test
+
+        ALT alt = new ALT(landmarks.length, graph.getNodes().length, preprocessedFilePath);
+        int altDistance = alt.search(graph, 0, 15, landmarks);
+        System.out.println(altDistance);
     }
 }

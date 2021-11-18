@@ -1,4 +1,3 @@
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.LinkedList;
 

@@ -31,7 +31,7 @@ public class ALTPreprocessor  {
         }
     }
     
-    private void preprocess() {
+    public void preprocess() {
         Dijkstra dijkstraForward = new Dijkstra(graph);
         Dijkstra dijkstraReversed = new Dijkstra(inverseGraph);
 
@@ -41,17 +41,15 @@ public class ALTPreprocessor  {
         
     }
 
-    
-
-    private boolean readCached() {
+    // private boolean readCached() {
         
-    }
+    // }
     
     private void dumpToFile(String path) throws IOException {
         try{
         java.io.BufferedWriter bufferedWriter = new java.io.BufferedWriter(new FileWriter(path));
-        for(int i=0; i<fromLandmark.length; i++){
-            for(int j=0; j<toLandmark.length;i++){
+        for(int i = 0; i < fromLandmark.length; i++){ //5 times
+            for(int j = 0; j < toLandmark.length; i++){ //5 times
                 bufferedWriter.write(fromLandmark[i][j]);
             }
         }

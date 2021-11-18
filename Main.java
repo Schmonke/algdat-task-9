@@ -1,13 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     
-    public static void parseNodeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
+    private static void parseNodeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfNodes = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = new Node[numberOfNodes];
@@ -35,7 +33,7 @@ public class Main {
 
     // Tis Was Easyz
 
-    public static void parseEdgeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
+    private static void parseEdgeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfEdges = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = graph.getNodes();
@@ -62,8 +60,12 @@ public class Main {
             invertedNodes[toNodeNumber].getEdges().add(invertedEdge);
         }
     }
-    
 
+    private static void preprocess(Graph graph, Graph invertedGraph, int[] landmarkNodeNumbers, boolean test) {
+        if (test) {
+            new ALTPreprocessor(graph, invertedGraph, landmarkNodeNumbers).preprocess();
+        }
+    }
 
     public static void main(String[] args) {
         String nodefilePath = args[0];
@@ -85,6 +87,8 @@ public class Main {
 
         Dijkstra dijkstra = new Dijkstra(graph);
         dijkstra.search(0, -1);
+
+        preprocess(graph, invertedGraph, new int[] {100, 200, 300, 400, 500}, false); //Set true to test
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
     }
 }

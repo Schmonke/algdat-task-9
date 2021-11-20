@@ -1,19 +1,32 @@
 import java.util.Objects;
+
+import javax.management.RuntimeErrorException;
+
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-public class ALTPreprocessor implements Serializable {
-    transient private final Graph graph;
-    transient private final Graph inverseGraph;
-    transient private final int[] landmarkNodeNumbers;
+public class ALTPreprocessor {
+    private final Graph graph;
+    private final Graph inverseGraph;
+    private final int[] landmarkNodeNumbers;
 
-    private final int[][] fromLandmark;
-    private final int[][] toLandmark;
-
+    private int[][] fromLandmark;
+    private int[][] toLandmark;
 
     public ALTPreprocessor(Graph graph, Graph inverseGraph, int[] landmarkNodeNumbers) {
         this.graph = Objects.requireNonNull(graph, "graph is null");
@@ -23,7 +36,7 @@ public class ALTPreprocessor implements Serializable {
         this.fromLandmark = new int[landmarkNodeNumbers.length][graph.getNodes().length];
         this.toLandmark = new int[landmarkNodeNumbers.length][graph.getNodes().length];
     }
-    
+
     private void fillArrayWithDistanceData(Graph graph, int[][] array) {
         Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
@@ -38,33 +51,100 @@ public class ALTPreprocessor implements Serializable {
         }
     }
     
-    public void preprocess(String path) {
-        fillArrayWithDistanceData(graph, fromLandmark);
-        fillArrayWithDistanceData(inverseGraph, toLandmark);
-
-        dumpToFile(path);
-    }
-
-    // private boolean readCached() {
-        
-    // }
-    
-    private void dumpToFile(String path) {
-        ObjectOutputStream objectOutputStream = null;
+    public void preprocess() {
+        String fileName = preprocessedFileName();
+        boolean cached;
         try {
-            objectOutputStream = new ObjectOutputStream(new FileOutputStream(path));
-            objectOutputStream.writeObject(this);
+            cached = readCached(fileName);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                objectOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        if (cached) {
+            System.out.println("We cached the lil' homie!");
+        }
+
+        if (!cached) {
+            fillArrayWithDistanceData(graph, fromLandmark);
+            fillArrayWithDistanceData(inverseGraph, toLandmark);
+
+            dumpToFile(fileName);
         }
     }
 
+    private void readFromFile(String path) throws IOException {
+        try (
+            FileInputStream fileInputStream = new FileInputStream(path);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        ) {
+            fromLandmark = (int[][])objectInputStream.readObject();
+            toLandmark = (int[][])objectInputStream.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void dumpToFile(String path) {
+        try (
+            FileOutputStream fileOutputStream = new FileOutputStream(path);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        ) {
+            objectOutputStream.writeObject(fromLandmark);
+            objectOutputStream.writeObject(toLandmark);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String preprocessedFileName() {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");  
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] hash;
+        try (
+            DigestOutputStream digestOutputStream = new DigestOutputStream(OutputStream.nullOutputStream(), digest);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(digestOutputStream);
+        ) {
+            objectOutputStream.writeObject(landmarkNodeNumbers);
+            objectOutputStream.writeObject(graph);
+
+            hash = digest.digest();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        StringBuilder targetFileNameBuilder = new StringBuilder();
+        targetFileNameBuilder.append("preprocessed_");
+        for (byte b : hash) {
+            targetFileNameBuilder.append(String.format("%02X", b));
+        }
+        return targetFileNameBuilder.toString();
+    }
+
+    private boolean readCached(String fileName) throws NoSuchAlgorithmException, IOException {
+        File targetFile = new File(fileName);
+        if (targetFile.exists()) {
+            readFromFile(targetFile.getAbsolutePath());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int fromLandmark(int landmarkIndex, int targetNode) {
+       return this.fromLandmark[landmarkIndex][targetNode]; 
+    }
+
+    public int toLandmark(int landmarkIndex, int sourceNode) {
+        return this.toLandmark[landmarkIndex][sourceNode];
+    }
+
+    // For comparing
     public int[][] getFromLandmark() {
         return fromLandmark;
     }

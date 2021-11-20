@@ -30,13 +30,13 @@ public class Dijkstra {
             ? new Node(-1, 0, 0)
             : nodes[endNodeNumber];
             
+        startNode.setDistance(0);
         queue.add(startNode);
 
         while (!queue.isEmpty()) {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
-            if(polledNode.getDistance() == Integer.MAX_VALUE) polledNode.setDistance(0);
 
             polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
                 Node toNode = nodes[edge.getToNodeNumber()];
@@ -55,6 +55,7 @@ public class Dijkstra {
                 }
 
                 if (!toNode.isVisited() && !toNode.isEnqueued()) { //Currently doesn't get used at all
+                    System.out.println("GEH - Dijkstra");
                     queue.add(toNode);
                     toNode.setEnqueued(true);
                 }

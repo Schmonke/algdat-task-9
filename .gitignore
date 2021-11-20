@@ -2,3 +2,4 @@
 .vscode/
 testfiles/
 *.class
+preprocessed_*

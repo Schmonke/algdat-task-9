@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Main {
     
     private static void parseNodeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
+        long timeStart = System.currentTimeMillis();
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfNodes = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = new Node[numberOfNodes];
@@ -19,6 +20,7 @@ public class Main {
         double longt;
 
         for (int i = 0; i < numberOfNodes; i++) {
+            if (i % 1200000 == 0 || i > 6892650) System.out.println("~ parsing nodes ~ : " + (i+1));
             number = scanner.nextInt();
             latt = scanner.nextDouble();
             longt = scanner.nextDouble();
@@ -29,6 +31,7 @@ public class Main {
 
         graph.setNodes(nodes);
         invertedGraph.setNodes(invertedNodes);
+        System.out.println("Time used : " + ((System.currentTimeMillis() - timeStart) / (60*1000F)));
     }
 
     // "This will be easy"
@@ -37,6 +40,7 @@ public class Main {
     // Tis Was Easyz
 
     private static void parseEdgeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
+        long timeStart = System.currentTimeMillis();
         Objects.requireNonNull(scanner, "Scanner cant be null");
         int numberOfEdges = Integer.parseInt(scanner.nextLine().replace(" ", ""));
         Node[] nodes = graph.getNodes();
@@ -50,6 +54,7 @@ public class Main {
         Edge invertedEdge;
 
         for (int i = 0; i < numberOfEdges; i++) {
+            if (i % 3000000 == 0 || i > 15494450) System.out.println("~ parsing edges ~" + (i+1));
             fromNodeNumber = scanner.nextInt();
             toNodeNumber = scanner.nextInt();
             drivetime = scanner.nextInt();
@@ -62,6 +67,7 @@ public class Main {
             nodes[fromNodeNumber].getEdges().add(edge);
             invertedNodes[toNodeNumber].getEdges().add(invertedEdge);
         }
+        System.out.println("Time used : " + ((System.currentTimeMillis() - timeStart) / (60*1000F)));
     }
 
     private static void preprocess(Graph graph, Graph invertedGraph, int[] landmarkNodeNumbers, String path, boolean test) {
@@ -77,10 +83,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        long timeStart = System.currentTimeMillis();
         String nodefilePath = args[0];
         String edgefilePath = args[1];
         int[] landmarks = {100, 200, 300, 400, 500};
-        String preprocessedFilePath = "./preprocessed_data.txt";
+        String preprocessedFilePath = "./preprocessed_test_data.txt";
 
         Scanner nodeScanner = null;
         Scanner edgeScanner = null;
@@ -101,10 +108,11 @@ public class Main {
         System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
 
-        //preprocess(graph, invertedGraph, landmarks, preprocessedFilePath, false); //Set true to test
+        preprocess(graph, invertedGraph, landmarks, preprocessedFilePath, false); //Set true to test
 
         ALT alt = new ALT(landmarks.length, graph.getNodes().length, preprocessedFilePath);
         int altDistance = alt.search(graph, 0, 15, landmarks);
         System.out.println(altDistance);
+        System.out.println("Time used total : " + ((System.currentTimeMillis() - timeStart) / (60*1000F)));
     }
 }

@@ -27,7 +27,8 @@ public class ALTPreprocessor implements Serializable {
     private void fillArrayWithDistanceData(Graph graph, int[][] array) {
         Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
-            dijkstra.search(landmarkNodeNumbers[i], -1);
+            System.out.println("Landmark: " + i);
+            int result = dijkstra.search(landmarkNodeNumbers[i], -1);
             Node[] nodes = graph.getNodes();
             //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {

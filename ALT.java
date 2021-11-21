@@ -26,11 +26,12 @@ public class ALT  {
         return result < 0 ? 0 : result; 
     }
 
+    // Aims to find the estimated distance from "n" to "target"
     private int findLandmarkEstimate(int from, int to, int landmarkIndex) {
         int landmarkToTarget = preprocessor.fromLandmark(landmarkIndex, to);
         int landmarkToCurrent = preprocessor.fromLandmark(landmarkIndex, from);
-        int targetToLandmark = preprocessor.toLandmark(landmarkIndex, to);
         int currentToLandmark = preprocessor.toLandmark(landmarkIndex, from);
+        int targetToLandmark = preprocessor.toLandmark(landmarkIndex, to);
 
         int res1 = zeroIfNegative(landmarkToTarget - landmarkToCurrent);
         int res2 = zeroIfNegative(currentToLandmark - targetToLandmark);
@@ -50,14 +51,11 @@ public class ALT  {
         return estimate;
     }
 
+    
+
     public int search(int startNumber, int endNumber) {        
         queue.clear();
-        for (Node node : graph.getNodes()) {
-            node.setDistance(Integer.MAX_VALUE);
-            node.setEnqueued(false);
-            node.setPrevious(null);
-            node.setVisited(false);
-        }
+        graph.reset();
 
         int result = -1;
         Node[] nodes = graph.getNodes();
@@ -83,9 +81,11 @@ public class ALT  {
                     toNode.setPrevious(polledNode);
                     if (!toNode.isVisited()) {
                         queue.remove(toNode);
-                        int estimate = findEstimate(polledNode.getNumber(), toNode.getNumber());
-                        //System.out.println(estimate);
-                        toNode.setEstimatedDistance(estimate);
+                        if (toNode.getEstimatedDistance() == -1) {
+                            int estimate = findEstimate(polledNode.getNumber(), toNode.getNumber());
+                            //System.out.println(estimate);
+                            toNode.setEstimatedDistance(estimate);
+                        }
                         queue.add(toNode);
                         toNode.setEnqueued(true);
                     }

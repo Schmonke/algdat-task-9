@@ -18,4 +18,13 @@ public class Graph implements Serializable {
     public void setNodes(Node[] nodes) {
         this.nodes = nodes;
     }
+
+    public void reset() {
+        for (Node node : nodes) {
+            node.setDistance(Integer.MAX_VALUE);
+            node.setEnqueued(false);
+            node.setPrevious(null);
+            node.setVisited(false);
+        }
+    }
 }

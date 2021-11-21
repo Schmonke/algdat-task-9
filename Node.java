@@ -5,7 +5,7 @@ public class Node implements Serializable {
     private int number;
     private LinkedList<Edge> edges;
     private int distance;
-    private int estimatedDistance;
+    private int estimatedDistance = -1;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
 

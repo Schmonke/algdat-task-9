@@ -17,12 +17,7 @@ public class Dijkstra {
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
     public int search(int startNodeNumber, int endNodeNumber) {
         queue.clear();
-        for (Node node : graph.getNodes()) {
-            node.setDistance(Integer.MAX_VALUE);
-            node.setEnqueued(false);
-            node.setPrevious(null);
-            node.setVisited(false);
-        }
+        graph.reset();
 
         Node[] nodes = graph.getNodes();
         Node startNode = nodes[startNodeNumber];

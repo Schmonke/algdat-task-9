@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.attribute.GroupPrincipal;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -98,6 +99,7 @@ public class ALTPreprocessor {
     }
 
     private String preprocessedFileName() {
+        graph.reset();
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");  

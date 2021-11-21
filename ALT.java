@@ -1,11 +1,5 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Comparator;
 import java.util.PriorityQueue;
-
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 public class ALT  {
     private final Graph graph;
@@ -57,7 +51,6 @@ public class ALT  {
         queue.clear();
         graph.reset();
 
-        int result = -1;
         Node[] nodes = graph.getNodes();
         Node startNode = nodes[startNumber];
         Node endNode = nodes[endNumber];

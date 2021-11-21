@@ -1,22 +1,11 @@
 import java.util.Objects;
-
-import javax.management.RuntimeErrorException;
-
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.attribute.GroupPrincipal;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,7 +31,7 @@ public class ALTPreprocessor {
         Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
             System.out.println("Landmark: " + i);
-            int result = dijkstra.search(landmarkNodeNumbers[i], -1);
+            dijkstra.search(landmarkNodeNumbers[i], -1);
             Node[] nodes = graph.getNodes();
             //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {

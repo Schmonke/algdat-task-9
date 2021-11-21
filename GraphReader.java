@@ -77,7 +77,7 @@ public class GraphReader {
                 int categoryNumber = reader.readNextInt();
                 PointOfInterestCategory category = PointOfInterestCategory.fromNumber(categoryNumber);
                 String quotedName = reader.readNextUntilEndOfLine();
-                String name = quotedName.substring(1, quotedName.length() - 2);
+                String name = quotedName.substring(1, quotedName.length() - 1);
                 pointsOfInterest.addPointOfInterest(nodeNumber, category, name);
             }
 

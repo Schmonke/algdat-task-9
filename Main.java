@@ -33,11 +33,11 @@ public class Main {
         System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
         
-        int[] gasstation = dijkstra.searchNearest(49872, 10, PointOfInterestCategory.GAS_STATION);
+        int[] gasstation = dijkstra.searchNearest(6590451, 10, PointOfInterestCategory.GAS_STATION);
         //int[] chargestation = dijkstra.searchNearest(49872, 10, PointOfInterestCategory.CHARGING_STATION)
         
-        for(int i=0; i<10; i++ ){
-            System.out.println(gasstation[i]);
+        for(int i=0; i<10; i++){
+           System.out.println(graph.getPointsOfInterest().getPointOfInterest(gasstation[i]).getName() + " - " + graph.getNodes()[gasstation[i]].getDistance() + "km(?)");
         }
 
         timerALTConstructor.start();

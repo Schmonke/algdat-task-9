@@ -85,9 +85,8 @@ public class Dijkstra {
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
 
-            // HashMap<NodeIndeks, PointOfInterest>
-            
-            if (graph.getPointsOfInterest().getPointOfInterest(polledNodeNumber).getCategory() == category){
+            PointOfInterest pointOfInterest = graph.getPointsOfInterest().getPointOfInterest(polledNodeNumber);
+            if (pointOfInterest != null && pointOfInterest.getCategory() == category) {
                 visited[visitedCount++] = polledNodeNumber;
             }
 
@@ -114,7 +113,7 @@ public class Dijkstra {
                 }
             });
 
-            if (visited[numbers] != 0) { //If specified amount of numbers are not filled up
+            if (visited[numbers-1] != 0) { //If specified amount of numbers are not filled up
                 break;
             }
         }

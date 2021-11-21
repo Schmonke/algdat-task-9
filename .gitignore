@@ -1,4 +1,6 @@
 .devcontainer/
 .vscode/
-testfiles/
+island/
+norden/
 *.class
+preprocessed_*

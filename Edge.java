@@ -1,6 +1,7 @@
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-public class Edge implements Serializable {
+public class Edge {
     private int toNodeNumber;
     private int drivetime;
     private int length;
@@ -43,6 +44,13 @@ public class Edge implements Serializable {
 
     public void setSpeedlimit(int speedlimit) {
         this.speedlimit = speedlimit;
+    }
+
+    public void serialize(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.writeInt(toNodeNumber);
+        objectOutputStream.writeInt(drivetime);
+        objectOutputStream.writeInt(length);
+        objectOutputStream.writeInt(speedlimit);
     }
 
     @Override

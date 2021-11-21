@@ -1,28 +1,18 @@
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.function.Supplier;
 
 public class Dijkstra {
     private final Graph graph;
-    private final PriorityQueue<Node> queue;
 
     public Dijkstra(Graph graph) {
         this.graph = graph;
-        queue = new PriorityQueue<>(graph.getNodes().length, new DistanceComparator());
     }
 
     // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
     public int search(int startNodeNumber, int endNodeNumber) {
-        queue.clear();
-        for (Node node : graph.getNodes()) {
-            node.setDistance(Integer.MAX_VALUE);
-            node.setEnqueued(false);
-            node.setPrevious(null);
-            node.setVisited(false);
-        }
+        PriorityQueue<Node> queue = new PriorityQueue<>(graph.getNodes().length, new DistanceComparator());
+        graph.reset();
 
         Node[] nodes = graph.getNodes();
         Node startNode = nodes[startNodeNumber];
@@ -30,13 +20,13 @@ public class Dijkstra {
             ? new Node(-1, 0, 0)
             : nodes[endNodeNumber];
             
+        startNode.setDistance(0);
         queue.add(startNode);
-
+        
         while (!queue.isEmpty()) {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
-            if(polledNode.getDistance() == Integer.MAX_VALUE) polledNode.setDistance(0);
 
             polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
                 Node toNode = nodes[edge.getToNodeNumber()];

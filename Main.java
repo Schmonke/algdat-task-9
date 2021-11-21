@@ -1,110 +1,52 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Scanner;
+import java.io.IOException;
 
 public class Main {
     
-    private static void parseNodeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
-        Objects.requireNonNull(scanner, "Scanner cant be null");
-        int numberOfNodes = Integer.parseInt(scanner.nextLine().replace(" ", ""));
-        Node[] nodes = new Node[numberOfNodes];
-        Node[] invertedNodes = nodes.clone();
-
-        int number;
-        double latt;
-        double longt;
-
-        for (int i = 0; i < numberOfNodes; i++) {
-            number = scanner.nextInt();
-            latt = scanner.nextDouble();
-            longt = scanner.nextDouble();
-
-            nodes[i] = new Node(number, latt, longt);
-            invertedNodes[i] = new Node(number, latt, longt);
-        }
-
-        graph.setNodes(nodes);
-        invertedGraph.setNodes(invertedNodes);
-    }
-
-    // "This will be easy"
-    // - Magnus 2021-11-14T19:14
-
-    // Tis Was Easyz
-
-    private static void parseEdgeFile(Graph graph, Graph invertedGraph, String path, Scanner scanner) {
-        Objects.requireNonNull(scanner, "Scanner cant be null");
-        int numberOfEdges = Integer.parseInt(scanner.nextLine().replace(" ", ""));
-        Node[] nodes = graph.getNodes();
-        Node[] invertedNodes = invertedGraph.getNodes();
-        int fromNodeNumber;
-        int toNodeNumber;
-        int drivetime;
-        int length;
-        int speedlimit;
-        Edge edge;
-        Edge invertedEdge;
-
-        for (int i = 0; i < numberOfEdges; i++) {
-            fromNodeNumber = scanner.nextInt();
-            toNodeNumber = scanner.nextInt();
-            drivetime = scanner.nextInt();
-            length = scanner.nextInt();
-            speedlimit = scanner.nextInt();
-
-            edge = new Edge(toNodeNumber, drivetime, length, speedlimit);
-            invertedEdge = new Edge(fromNodeNumber, drivetime, length, speedlimit);
-            
-            nodes[fromNodeNumber].getEdges().add(edge);
-            invertedNodes[toNodeNumber].getEdges().add(invertedEdge);
-        }
-    }
-
-    private static void preprocess(Graph graph, Graph invertedGraph, int[] landmarkNodeNumbers, String path, boolean test) {
-        if (test) {
-            ALTPreprocessor preprocessor = new ALTPreprocessor(graph, invertedGraph, landmarkNodeNumbers);
-            preprocessor.preprocess(path);
-            // ALT alt = new ALT(landmarkNodeNumbers.length, graph.getNodes().length, path);
-            // for (int i = 0; i < landmarkNodeNumbers.length; i++) {
-            //     System.out.print(alt.getFromLandmarkToNode()[i][new Random().nextInt(100000)] + " ");
-            //     System.out.println(Arrays.equals(alt.getFromLandmarkToNode()[i], preprocessor.getFromLandmark()[i]));
-            // }
-        }
-    }
-
     public static void main(String[] args) {
+        Timer timerTotal = new Timer();
+        timerTotal.start();
+
+        Timer timerDijkstra = new Timer();
+        Timer timerALT = new Timer();
+        Timer timerALTConstructor = new Timer();
+
         String nodefilePath = args[0];
         String edgefilePath = args[1];
         int[] landmarks = {100, 200, 300, 400, 500};
-        String preprocessedFilePath = "./preprocessed_data.txt";
 
-        Scanner nodeScanner = null;
-        Scanner edgeScanner = null;
+        GraphReader reader = new GraphReader();
+        
+        Graph graph = new Graph();
+        Graph invertedGraph = new Graph();
         try {
-            nodeScanner = new Scanner(new File(nodefilePath));
-            edgeScanner = new Scanner(new File(edgefilePath));
-        } catch (FileNotFoundException e) {
+            reader.parseNodeFile(graph, invertedGraph, nodefilePath);
+            reader.parseEdgeFile(graph, invertedGraph, edgefilePath);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        Graph graph = new Graph();
-        Graph invertedGraph = new Graph();
-        parseNodeFile(graph, invertedGraph, nodefilePath, nodeScanner);
-        parseEdgeFile(graph, invertedGraph, edgefilePath, edgeScanner);
-
         Dijkstra dijkstra = new Dijkstra(graph);
-        int dijkstraDistance = dijkstra.search(0, 15);
+        timerDijkstra.start();
+        int dijkstraDistance = dijkstra.search(6861306, 2518118);
+        timerDijkstra.end();
         System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
+        
 
-        //preprocess(graph, invertedGraph, landmarks, preprocessedFilePath, false); //Set true to test
-
-        ALT alt = new ALT(landmarks.length, graph.getNodes().length, preprocessedFilePath);
-        int altDistance = alt.search(graph, 0, 15, landmarks);
+        timerALTConstructor.start();
+        ALT alt = new ALT(graph, invertedGraph, landmarks);
+        timerALTConstructor.end();
+        timerALT.start();
+        int altDistance = alt.search(6861306, 2518118);
+        timerALT.end();
         System.out.println(altDistance);
+        timerTotal.end();
+
+        //Timeprints:
+        System.out.println("Dijkstra time  : " + timerDijkstra.getTimeSeconds());
+        System.out.println("ALT time       : " + timerALT.getTimeSeconds());
+        System.out.println("ALT.ctor time  : " + timerALTConstructor.getTimeSeconds());
+        System.out.println("TOTAL time     : " + timerTotal.getTimeSeconds());
+
     }
 }

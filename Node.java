@@ -1,17 +1,18 @@
-import java.io.Serializable;
 import java.util.LinkedList;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-public class Node implements Serializable {
+public class Node {
     private int number;
     private LinkedList<Edge> edges;
-    private int distance;
-    private int estimatedDistance;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
 
-    private transient Node previous;
-    private transient boolean visited;
-    private transient boolean enqueued;
+    private Node previous;
+    private boolean visited;
+    private boolean enqueued;
+    private int distance;
+    private int estimatedDistance = -1;
 
     public Node(int number, double latitude, double longitude) {
         this.number = number;
@@ -94,6 +95,15 @@ public class Node implements Serializable {
 
     public void setEnqueued(boolean enqueued) {
         this.enqueued = enqueued;
+    }
+
+    public void serialize(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.writeInt(number);
+        objectOutputStream.writeDouble(latitude);
+        objectOutputStream.writeDouble(longitude);
+        for (Edge edge : edges) {
+            edge.serialize(objectOutputStream);
+        }
     }
 
     @Override

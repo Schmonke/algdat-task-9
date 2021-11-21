@@ -2,6 +2,7 @@ import java.io.Serializable;
 
 public class Graph implements Serializable {
     private Node[] nodes;
+    private PointsOfInterest pointsOfInterest;
 
     public Graph() {
         
@@ -17,6 +18,14 @@ public class Graph implements Serializable {
 
     public void setNodes(Node[] nodes) {
         this.nodes = nodes;
+    }
+
+    public PointsOfInterest getPointsOfInterest() {
+        return pointsOfInterest;
+    }
+
+    public void setPointsOfInterest(PointsOfInterest pointsOfInterest) {
+        this.pointsOfInterest = pointsOfInterest;
     }
 
     public void reset() {

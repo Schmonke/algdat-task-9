@@ -17,4 +17,8 @@ public class Timer {
     public float getTimeMinutes() {
         return (end - start) / (60*1000F);
     }
+
+    public float getTimeHours(){
+        return (end - start) / (60*60*1000F);
+    }
 }

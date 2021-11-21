@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class Node {
-    private int number;
     private LinkedList<Edge> edges;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
@@ -14,8 +13,7 @@ public class Node {
     private int distance;
     private int estimatedDistance = -1;
 
-    public Node(int number, double latitude, double longitude) {
-        this.number = number;
+    public Node(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.edges = new LinkedList<Edge>();
@@ -23,14 +21,6 @@ public class Node {
 
     public int findSumDistance() {
         return distance + estimatedDistance;
-    }
-    
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public LinkedList<Edge> getEdges() {
@@ -98,7 +88,6 @@ public class Node {
     }
 
     public void serialize(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeInt(number);
         objectOutputStream.writeDouble(latitude);
         objectOutputStream.writeDouble(longitude);
         for (Edge edge : edges) {
@@ -108,6 +97,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node [" + number + "]";
+        return "Node []";
     }
 }

@@ -4,14 +4,14 @@ import java.util.LinkedList;
 public class Node implements Serializable {
     private int number;
     private LinkedList<Edge> edges;
-    private int distance;
-    private int estimatedDistance = -1;
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
 
     private transient Node previous;
     private transient boolean visited;
     private transient boolean enqueued;
+    private transient int distance;
+    private transient int estimatedDistance = -1;
 
     public Node(int number, double latitude, double longitude) {
         this.number = number;

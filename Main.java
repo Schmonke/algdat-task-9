@@ -205,12 +205,12 @@ public class Main {
         parseEdgeFile(graph, invertedGraph, edgefilePath);
 
         Dijkstra dijkstra = new Dijkstra(graph);
-        int dijkstraDistance = dijkstra.search(6861306, 2518118);
+        int dijkstraDistance = dijkstra.search(0, 50);
         System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
         
         ALT alt = new ALT(graph, invertedGraph, landmarks);
-        int altDistance = alt.search(6861306, 2518118);
+        int altDistance = alt.search(0, 50);
         System.out.println(altDistance);
         System.out.println("Time used total : " + ((System.currentTimeMillis() - timeStart) / (60*1000F)));
     }

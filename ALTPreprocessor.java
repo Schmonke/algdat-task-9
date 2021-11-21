@@ -88,7 +88,6 @@ public class ALTPreprocessor {
     }
 
     private String preprocessedFileName() {
-        graph.reset();
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");  

@@ -24,7 +24,7 @@ public class Dijkstra {
             
         startNode.setDistance(0);
         queue.add(startNode);
-
+        
         while (!queue.isEmpty()) {
             Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
             polledNode.setEnqueued(false);

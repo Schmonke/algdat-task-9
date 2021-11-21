@@ -75,7 +75,7 @@ public class ALT  {
                     if (!toNode.isVisited()) {
                         queue.remove(toNode);
                         if (toNode.getEstimatedDistance() == -1) {
-                            int estimate = findEstimate(polledNode.getNumber(), toNode.getNumber());
+                            int estimate = findEstimate(toNode.getNumber(), endNode.getNumber());
                             //System.out.println(estimate);
                             toNode.setEstimatedDistance(estimate);
                         }

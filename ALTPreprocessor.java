@@ -52,10 +52,8 @@ public class ALTPreprocessor {
             throw new RuntimeException(e);
         }
         if (cached) {
-            System.out.println("We cached the lil' homie!");
-        }
-
-        if (!cached) {
+            System.out.println("Cached preproc");
+        } else {
             fillArrayWithDistanceData(graph, fromLandmark);
             fillArrayWithDistanceData(inverseGraph, toLandmark);
 

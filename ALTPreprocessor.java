@@ -101,7 +101,9 @@ public class ALTPreprocessor {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(digestOutputStream);
         ) {
             objectOutputStream.writeObject(landmarkNodeNumbers);
-            objectOutputStream.writeObject(graph);
+            for (Node node : graph.getNodes()) {
+                node.serialize(objectOutputStream);
+            }
 
             hash = digest.digest();
         } catch (IOException e) {

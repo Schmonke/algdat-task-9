@@ -8,6 +8,7 @@ public class Main {
 
         Timer timerDijkstra = new Timer();
         Timer timerALT = new Timer();
+        Timer timerALTConstructor = new Timer();
 
         String nodefilePath = args[0];
         String edgefilePath = args[1];
@@ -31,7 +32,10 @@ public class Main {
         System.out.println(dijkstraDistance);
         //Arrays.stream(graph.getNodes()).forEach(node -> System.out.println(node.getEdges().toString()));
         
+
+        timerALTConstructor.start();
         ALT alt = new ALT(graph, invertedGraph, landmarks);
+        timerALTConstructor.end();
         timerALT.start();
         int altDistance = alt.search(6861306, 2518118);
         timerALT.end();
@@ -41,6 +45,7 @@ public class Main {
         //Timeprints:
         System.out.println("Dijkstra time  : " + timerDijkstra.getTimeSeconds());
         System.out.println("ALT time       : " + timerALT.getTimeSeconds());
+        System.out.println("ALT.ctor time  : " + timerALTConstructor.getTimeSeconds());
         System.out.println("TOTAL time     : " + timerTotal.getTimeSeconds());
 
     }

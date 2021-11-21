@@ -85,7 +85,6 @@ public class ALT  {
                 }
                 //System.out.println(!toNode.isEnqueued());
                 if (!toNode.isVisited() && !toNode.isEnqueued()) {
-                    System.out.println("GEH - ALT");
                     queue.add(toNode);
                     toNode.setEnqueued(true);
                 }

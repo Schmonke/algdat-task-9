@@ -86,7 +86,9 @@ public class GraphReader {
             double longt;
     
             for (int i = 0; i < numberOfNodes; i++) {
-                if (i % 1200000 == 0 || i > 6892650) System.out.println("~ parsing nodes ~ : " + (i+1));
+                if (i % (numberOfNodes / 100) == 0) {
+                    System.out.printf("~ parsing nodes ~ : %d%%%n", i * 100 / numberOfNodes);
+                }
                 number = readNextInt(stream);
                 latt = readNextDouble(stream);
                 longt = readNextDouble(stream);
@@ -117,7 +119,9 @@ public class GraphReader {
             Edge invertedEdge;
     
             for (int i = 0; i < numberOfEdges; i++) {
-                if (i % 3000000 == 0 || i > 15494450) System.out.println("~ parsing edges ~ : " + (i+1));
+                if (i % (numberOfEdges / 100) == 0) {
+                    System.out.printf("~ parsing edges ~ : %d%%%n", i * 100 / numberOfEdges);
+                }
                 fromNodeNumber = readNextInt(stream);
                 toNodeNumber = readNextInt(stream);
                 drivetime = readNextInt(stream);
@@ -132,5 +136,4 @@ public class GraphReader {
             }
         }
     }
-
 }

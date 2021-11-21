@@ -3,17 +3,15 @@ import java.util.PriorityQueue;
 
 public class Dijkstra {
     private final Graph graph;
-    private final PriorityQueue<Node> queue;
 
     public Dijkstra(Graph graph) {
         this.graph = graph;
-        queue = new PriorityQueue<>(graph.getNodes().length, new DistanceComparator());
     }
 
     // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
     // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
     public int search(int startNodeNumber, int endNodeNumber) {
-        queue.clear();
+        PriorityQueue<Node> queue = new PriorityQueue<>(graph.getNodes().length, new DistanceComparator());
         graph.reset();
 
         Node[] nodes = graph.getNodes();
@@ -47,7 +45,6 @@ public class Dijkstra {
                 }
 
                 if (!toNode.isVisited() && !toNode.isEnqueued()) { //Currently doesn't get used at all
-                    System.out.println("GEH - Dijkstra");
                     queue.add(toNode);
                     toNode.setEnqueued(true);
                 }

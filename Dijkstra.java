@@ -4,14 +4,23 @@ import java.util.PriorityQueue;
 
 public class Dijkstra {
     private final Graph graph;
+    private int pollCount = 0;
 
     public Dijkstra(Graph graph) {
         this.graph = graph;
     }
 
-    private int[] search(int startNodeNumber, NodeCondition condition, int maxNodes) {
+    public int getPrevPollCount() {
+        return pollCount;
+    }
+
+    private int[] search(Timer timer, int startNodeNumber, NodeCondition condition, int maxNodes) {
+        boolean haveTimer = false;
+        if (timer != null) haveTimer = true;
+        if (haveTimer) timer.start();
         PriorityQueue<Integer> queue = new PriorityQueue<>(graph.getNodes().length, new IndexComparator());
         graph.reset();
+        pollCount = 0;
         
         int foundNodeIndex = 0;
         int[] foundNodes = new int[maxNodes];
@@ -23,7 +32,8 @@ public class Dijkstra {
         queue.add(startNodeNumber);
         
         while (!queue.isEmpty()) {
-            int polledNodeNumber = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
+            int polledNodeNumber = queue.poll();
+            pollCount++;
             Node polledNode = nodes[polledNodeNumber];
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
@@ -35,12 +45,11 @@ public class Dijkstra {
                 }
             }
 
-            polledNode.getEdges().forEach(edge -> { // Adds all neighbours for the chosen node, until queue is empty.
+            polledNode.getEdges().forEach(edge -> {
                 int toNodeNumber = edge.getToNodeNumber();
                 Node toNode = nodes[toNodeNumber];
                 int newDistance = polledNode.getDistance() + edge.getLength();
 
-                //look for the shortest path
                 if (newDistance < toNode.getDistance()) {
                     toNode.setDistance(newDistance);
                     toNode.setDriveTime(polledNode.getDriveTime() + edge.getDrivetime());
@@ -51,142 +60,25 @@ public class Dijkstra {
                         toNode.setEnqueued(true);
                     }
                 }
-
-                if (!toNode.isVisited() && !toNode.isEnqueued()) {
-                    queue.add(toNodeNumber);
-                    toNode.setEnqueued(true);
-                }
             });
         }
-
+        if (haveTimer) timer.end();
         return Arrays.copyOf(foundNodes, foundNodeIndex);
     }
 
-    public int searchToNode(int startNodeNumber, int endNodeNumber) {
-        int[] foundNodes = search(startNodeNumber, (index) -> index == endNodeNumber, 1);
+    public int searchToNode(Timer timer, int startNodeNumber, int endNodeNumber) {
+        int[] foundNodes = search(timer, startNodeNumber, (index) -> index == endNodeNumber, 1);
         return foundNodes.length != 0 ? foundNodes[0] : -1;
     }
 
-    public int[] searchNearest(int startNodeNumber, PointOfInterestCategory category, int maxNodes) {
+    public int[] searchNearest(Timer timer, int startNodeNumber, PointOfInterestCategory category, int maxNodes) {
         NodeCondition condition = (index) -> {
             PointOfInterest pointOfInterest = graph.getPointsOfInterest().getPointOfInterest(index);
             return pointOfInterest != null && pointOfInterest.getCategory() == category;
         };
         
-        return search(startNodeNumber, condition, maxNodes);
+        return search(timer, startNodeNumber, condition, maxNodes);
     }
-
-    // Korteste vei representeres som en lenket liste som går bakover fra mål til start.
-    // Returnerer distanse fra start til sluttnode, akkumulert gjennom søket. 
-    // public int search(int startNodeNumber, int endNodeNumber) {
-    //     PriorityQueue<Integer> queue = new PriorityQueue<>(graph.getNodes().length, new IndexComparator());
-    //     graph.reset();
-
-    //     Node[] nodes = graph.getNodes();
-    //     Node startNode = nodes[startNodeNumber];
-    //     Node endNode = endNodeNumber == -1 
-    //         ? new Node(0, 0)
-    //         : nodes[endNodeNumber];
-            
-    //     startNode.setDistance(0);
-    //     queue.add(startNodeNumber);
-        
-    //     while (!queue.isEmpty()) {
-    //         int polledNodeNumber = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
-    //         Node polledNode = nodes[polledNodeNumber];
-    //         polledNode.setEnqueued(false);
-    //         polledNode.setVisited(true);
-
-    //         polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen.
-    //             int toNodeNumber = edge.getToNodeNumber();
-    //             Node toNode = nodes[toNodeNumber];
-    //             int newDistance = polledNode.getDistance() + edge.getLength();
-
-    //             //look for the shortest path
-    //             if (newDistance < toNode.getDistance()) {
-    //                 toNode.setDistance(newDistance);
-    //                 toNode.setPrevious(polledNode);
-    //                 if (!toNode.isVisited()) {
-    //                     queue.remove(toNodeNumber);
-    //                     queue.add(toNodeNumber);
-    //                     toNode.setEnqueued(true);
-    //                 }
-    //             }
-
-    //             if (!toNode.isVisited() && !toNode.isEnqueued()) { //Currently doesn't get used at all
-    //                 queue.add(toNodeNumber);
-    //                 toNode.setEnqueued(true);
-    //             }
-    //         });
-
-    //         if (endNode.isVisited()) {
-    //             break;
-    //         }
-    //     }
-    //     return endNode.getDistance();
-    // }
-
-    
-    // class DistanceComparator implements Comparator<Node> {
-    //     @Override
-    //     public int compare(Node o1, Node o2) {
-    //         return o1.getDistance() - o2.getDistance();
-    //     }
-    // }
-
-    // //Search for the nearest landmark based on category
-    // public int[] searchNearest(int startNodeNumber, int numbers, PointOfInterestCategory category) {
-    //     PriorityQueue<Integer> queue = new PriorityQueue<>(graph.getNodes().length, new IndexComparator());
-    //     graph.reset();
-
-    //     Node[] nodes = graph.getNodes();
-    //     Node startNode = nodes[startNodeNumber];
-    //     int[] visited = new int[numbers];
-    //     int visitedCount = 0;
-            
-    //     startNode.setDistance(0);
-    //     queue.add(startNodeNumber);
-        
-    //     while (!queue.isEmpty()) {
-    //         int polledNodeNumber = queue.poll();
-    //         Node polledNode = nodes[polledNodeNumber]; // Trekker alltid den noden som har minst avstand til kilden.
-    //         polledNode.setEnqueued(false);
-    //         polledNode.setVisited(true);
-
-    //         PointOfInterest pointOfInterest = graph.getPointsOfInterest().getPointOfInterest(polledNodeNumber);
-    //         if (pointOfInterest != null && pointOfInterest.getCategory() == category) {
-    //             visited[visitedCount++] = polledNodeNumber;
-    //         }
-
-    //         polledNode.getEdges().forEach(edge -> { // Legger til alle nabonoder for den valgte noden, til køen. 
-    //             int toNodeNumber = edge.getToNodeNumber();
-    //             Node toNode = nodes[toNodeNumber];
-    //             int newDistance = polledNode.getDistance() + edge.getLength();
-
-    //             //look for the shortest path
-    //             if (newDistance < toNode.getDistance()) {
-                    
-    //                 toNode.setDistance(newDistance);
-    //                 toNode.setPrevious(polledNode);
-    //                 if (!toNode.isVisited()) {
-    //                     queue.remove(toNodeNumber);
-    //                     queue.add(toNodeNumber);
-    //                     toNode.setEnqueued(true);
-    //                 }
-    //             }
-
-    //             if (!toNode.isVisited() && !toNode.isEnqueued()) { //Currently doesn't get used at all
-    //                 queue.add(toNodeNumber);
-    //                 toNode.setEnqueued(true);
-    //             }
-    //         });
-
-    //         if (visited[numbers-1] != 0) { //If specified amount of numbers are not filled up
-    //             break;
-    //         }
-    //     }
-    //     return visited;
-    // }
 
     @FunctionalInterface
     interface NodeCondition {

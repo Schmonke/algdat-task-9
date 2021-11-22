@@ -76,7 +76,7 @@ public class Node {
         return this.driveTime;
     }
 
-    public void setDriveTime(int drivetime) {
+    public void setDriveTime(int driveTime) {
         this.driveTime = driveTime;
     }
 

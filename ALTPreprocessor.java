@@ -31,7 +31,7 @@ public class ALTPreprocessor {
         Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
             System.out.println("Landmark: " + i);
-            dijkstra.searchToNode(landmarkNodeNumbers[i], -1);
+            dijkstra.searchToNode(null, landmarkNodeNumbers[i], -1);
             Node[] nodes = graph.getNodes();
             //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {

@@ -4,3 +4,5 @@ island/
 norden/
 *.class
 preprocessed_*
+cords.txt
+nearest_cords.txt

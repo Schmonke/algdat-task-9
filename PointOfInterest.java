@@ -1,4 +1,3 @@
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class PointOfInterest {

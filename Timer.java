@@ -1,6 +1,11 @@
 public class Timer {
+    private String name;
     private long start;
     private long end;
+
+    public Timer(String name) {
+        this.name = name;
+    }
 
     public void start() {
         start = System.currentTimeMillis();
@@ -20,5 +25,9 @@ public class Timer {
 
     public float getTimeHours(){
         return (end - start) / (60*60*1000F);
+    }
+
+    public String getName() {
+        return name;
     }
 }

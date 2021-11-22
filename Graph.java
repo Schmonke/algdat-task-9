@@ -32,8 +32,9 @@ public class Graph implements Serializable {
         for (Node node : nodes) {
             node.setDistance(Integer.MAX_VALUE);
             node.setEnqueued(false);
-            node.setPrevious(null);
+            node.setPrevious(-1);
             node.setVisited(false);
+            node.setDriveTime(-1);
         }
     }
 }

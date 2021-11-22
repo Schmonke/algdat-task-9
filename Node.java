@@ -7,10 +7,11 @@ public class Node {
     private double latitude; //Breddegrad
     private double longitude; //Langdegrad
 
-    private Node previous;
+    private int previous;
     private boolean visited;
     private boolean enqueued;
     private int distance;
+    private int driveTime;
     private int estimatedDistance = -1;
 
     public Node(double latitude, double longitude) {
@@ -63,12 +64,20 @@ public class Node {
         this.longitude = longitude;
     }
 
-    public Node getPrevious() {
+    public int getPrevious() {
         return previous;
     }
 
-    public void setPrevious(Node previous) {
-        this.previous = previous;
+    public void setPrevious(int previousNodeNumber) {
+        this.previous = previousNodeNumber;
+    }
+
+    public int getDriveTime() {
+        return this.driveTime;
+    }
+
+    public void setDriveTime(int drivetime) {
+        this.driveTime = driveTime;
     }
 
     public boolean isVisited() {

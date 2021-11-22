@@ -31,7 +31,7 @@ public class ALTPreprocessor {
         Dijkstra dijkstra = new Dijkstra(graph);
         for (int i = 0; i < landmarkNodeNumbers.length; i++) {
             System.out.println("Landmark: " + i);
-            dijkstra.search(landmarkNodeNumbers[i], -1);
+            dijkstra.searchToNode(landmarkNodeNumbers[i], -1);
             Node[] nodes = graph.getNodes();
             //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {
@@ -52,7 +52,7 @@ public class ALTPreprocessor {
             throw new RuntimeException(e);
         }
         if (cached) {
-            System.out.println("Cached preproc");
+            System.out.println("Found cached ALT preprocessing - using cached!");
         } else {
             fillArrayWithDistanceData(graph, fromLandmark);
             fillArrayWithDistanceData(inverseGraph, toLandmark);

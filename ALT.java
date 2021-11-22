@@ -41,10 +41,8 @@ public class ALT  {
         return estimate;
     }
 
-    
-
     public int search(int startNodeNumber, int endNodeNumber) {        
-        PriorityQueue<Node> queue = new PriorityQueue<>(graph.getNodes().length, new DistanceComparator());
+        PriorityQueue<Integer> queue = new PriorityQueue<>(graph.getNodes().length, new IndexComparator());
         graph.reset();
 
         Node[] nodes = graph.getNodes();
@@ -52,10 +50,11 @@ public class ALT  {
         Node endNode = nodes[endNodeNumber];
 
         startNode.setDistance(0);    
-        queue.add(startNode);
+        queue.add(startNodeNumber);
 
         while (!queue.isEmpty()) {
-            Node polledNode = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
+            int polledNodeNumber = queue.poll(); // Trekker alltid den noden som har minst avstand til kilden.
+            Node polledNode = nodes[polledNodeNumber];
             polledNode.setEnqueued(false);
             polledNode.setVisited(true);
             
@@ -67,19 +66,19 @@ public class ALT  {
                 //look for the shortest path
                 if (newDistance < toNode.getDistance()) {
                     toNode.setDistance(newDistance);
-                    toNode.setPrevious(polledNode);
+                    toNode.setPrevious(polledNodeNumber);
                     if (!toNode.isVisited()) {
-                        queue.remove(toNode);
+                        queue.remove(toNodeNumber);
                         if (toNode.getEstimatedDistance() == -1) {
                             int estimate = findEstimate(toNodeNumber, endNodeNumber);
                             toNode.setEstimatedDistance(estimate);
                         }
-                        queue.add(toNode);
+                        queue.add(toNodeNumber);
                         toNode.setEnqueued(true);
                     }
                 }
                 if (!toNode.isVisited() && !toNode.isEnqueued()) {
-                    queue.add(toNode);
+                    queue.add(toNodeNumber);
                     toNode.setEnqueued(true);
                 }
             });
@@ -92,10 +91,10 @@ public class ALT  {
         return endNode.getDistance();
     }
 
-    class DistanceComparator implements Comparator<Node> {
+    class IndexComparator implements Comparator<Integer> {
         @Override
-        public int compare(Node o1, Node o2) {
-            return o1.findSumDistance() - o2.findSumDistance();
+        public int compare(Integer int1, Integer int2) {
+            return graph.getNodes()[int1].findSumDistance() - graph.getNodes()[int2].findSumDistance();
         }
     }
 }

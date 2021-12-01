@@ -99,14 +99,16 @@ class ALT  {
                 int newDriveTime = polledNode.getDriveTime() + edge.getDrivetime();
 
                 if (newDriveTime < toNode.getDriveTime()) {
-                    toNode.setDistance(polledNode.getDriveTime() + edge.getDrivetime());
-                    toNode.setPrevious(polledNodeNumber);
-                    toNode.setDriveTime(newDriveTime);                    
+                    toNode.setDriveTime(newDriveTime);
+                    toNode.setDistance(polledNode.getDistance() + edge.getLength());
+                    toNode.setPrevious(polledNodeNumber);                    
                     if (!toNode.isVisited()) {
-                        queue.remove(toNodeNumber);
-                        if (toNode.getEstimatedDistance() == -1) {
+                        if (toNode.isEnqueued()) {
+                            queue.remove(toNodeNumber);
+                        }
+                        if (toNode.getEstimatedDriveTime() == -1) {
                             int estimate = findEstimate(toNodeNumber, endNodeNumber);
-                            toNode.setEstimatedDistance(estimate);
+                            toNode.setEstimatedDriveTime(estimate);
                         }
                         queue.add(toNodeNumber);
                         toNode.setEnqueued(true);
@@ -125,7 +127,7 @@ class ALT  {
     class IndexComparator implements Comparator<Integer> {
         @Override
         public int compare(Integer int1, Integer int2) {
-            return graph.getNodes()[int1].findSumDistance() - graph.getNodes()[int2].findSumDistance();
+            return graph.getNodes()[int1].findSumDriveTime() - graph.getNodes()[int2].findSumDriveTime();
         }
     }
 }
@@ -156,7 +158,7 @@ class ALTPreprocessor {
             Node[] nodes = graph.getNodes();
             //System.out.println(nodes[i].getDistance());
             for (int j = 0; j < nodes.length; j++) {
-                array[i][j] = nodes[j].getDistance();
+                array[i][j] = nodes[j].getDriveTime();
                 //System.out.println(array[i][j]);
             }
         }
@@ -318,7 +320,9 @@ class Dijkstra {
                     toNode.setDistance(polledNode.getDistance() + edge.getLength());
                     toNode.setPrevious(polledNodeNumber);
                     if (!toNode.isVisited()) {
-                        queue.remove(toNodeNumber);
+                        if (toNode.isEnqueued()) {
+                            queue.remove(toNodeNumber);
+                        }
                         queue.add(toNodeNumber);
                         toNode.setEnqueued(true);
                     }
@@ -722,7 +726,7 @@ class Node {
     private boolean enqueued;
     private int distance;
     private int driveTime;
-    private int estimatedDistance = -1;
+    private int estimatedDriveTime = -1;
 
     public Node(double latitude, double longitude) {
         this.latitude = latitude;
@@ -730,8 +734,8 @@ class Node {
         this.edges = new LinkedList<Edge>();
     }
 
-    public int findSumDistance() {
-        return distance + estimatedDistance;
+    public int findSumDriveTime() {
+        return driveTime + estimatedDriveTime;
     }
 
     public LinkedList<Edge> getEdges() {
@@ -750,12 +754,12 @@ class Node {
         this.distance = distance;
     }
 
-    public int getEstimatedDistance() {
-        return estimatedDistance;
+    public int getEstimatedDriveTime() {
+        return estimatedDriveTime;
     }
 
-    public void setEstimatedDistance(int estimatedDistance) {
-        this.estimatedDistance = estimatedDistance;
+    public void setEstimatedDriveTime(int estimatedDriveTime) {
+        this.estimatedDriveTime = estimatedDriveTime;
     }
 
     public double getLatitude() {

@@ -96,12 +96,12 @@ class ALT  {
             polledNode.getEdges().forEach(edge -> {
                 int toNodeNumber = edge.getToNodeNumber();
                 Node toNode = nodes[edge.getToNodeNumber()];
-                int newDistance = polledNode.getDistance() + edge.getLength();
+                int newDriveTime = polledNode.getDriveTime() + edge.getDrivetime();
 
-                if (newDistance < toNode.getDistance()) {
-                    toNode.setDistance(newDistance);
+                if (newDriveTime < toNode.getDriveTime()) {
+                    toNode.setDistance(polledNode.getDriveTime() + edge.getDrivetime());
                     toNode.setPrevious(polledNodeNumber);
-                    toNode.setDriveTime(polledNode.getDriveTime() + edge.getDrivetime());                    
+                    toNode.setDriveTime(newDriveTime);                    
                     if (!toNode.isVisited()) {
                         queue.remove(toNodeNumber);
                         if (toNode.getEstimatedDistance() == -1) {
@@ -119,7 +119,7 @@ class ALT  {
             }
         }
         timer.end();
-        return endNode.getDistance();
+        return endNode.getDriveTime();
     }
 
     class IndexComparator implements Comparator<Integer> {
@@ -311,11 +311,11 @@ class Dijkstra {
             polledNode.getEdges().forEach(edge -> {
                 int toNodeNumber = edge.getToNodeNumber();
                 Node toNode = nodes[toNodeNumber];
-                int newDistance = polledNode.getDistance() + edge.getLength();
+                int newDriveTime = polledNode.getDriveTime() + edge.getDrivetime();
 
-                if (newDistance < toNode.getDistance()) {
-                    toNode.setDistance(newDistance);
-                    toNode.setDriveTime(polledNode.getDriveTime() + edge.getDrivetime());
+                if (newDriveTime < toNode.getDriveTime()) {
+                    toNode.setDriveTime(newDriveTime);
+                    toNode.setDistance(polledNode.getDistance() + edge.getLength());
                     toNode.setPrevious(polledNodeNumber);
                     if (!toNode.isVisited()) {
                         queue.remove(toNodeNumber);
@@ -351,7 +351,7 @@ class Dijkstra {
     class IndexComparator implements Comparator<Integer> {
         @Override
         public int compare(Integer int1, Integer int2) {
-            return graph.getNodes()[int1].getDistance() - graph.getNodes()[int2].getDistance();
+            return graph.getNodes()[int1].getDriveTime() - graph.getNodes()[int2].getDriveTime();
         }
     }
 }
@@ -449,7 +449,7 @@ class Graph implements Serializable {
             node.setEnqueued(false);
             node.setPrevious(-1);
             node.setVisited(false);
-            node.setDriveTime(-1);
+            node.setDriveTime(Integer.MAX_VALUE);
         }
     }
 }
@@ -540,8 +540,6 @@ class GraphReader {
 }
 
 public class Main {
-    private static int[] LAND = {702477, 2151398, 203356, 5263302, 5662488};
-
     private static void writeLatLonToFile(Graph graph, int nodeNumber) {
         try (PrintStream printStream = new PrintStream("cords.txt")) {    
             Node node = graph.getNodes()[nodeNumber];
@@ -583,6 +581,12 @@ public class Main {
         System.out.println("  - Distance      : " + distance + "m");
         System.out.println("  - Dequeued nodes: " + dijkstra.getPrevPollCount());
         System.out.println("  - Drive time    : " + driveTime); 
+        
+        int count = 0;
+        for (int i = nodeNumber; i != -1; i = graph.getNodes()[i].getPrevious()) {
+            count++;
+        }
+        System.out.println("  - Nodes in route: " + count);
     }
     
     private static void runAlt(Timer timer, Graph graph, Graph invertedGraph, int[] landmarks, String rawStartNodeNumber, String rawEndNodeNumber){
@@ -594,6 +598,12 @@ public class Main {
         System.out.println("  - Distance      : " + distance + "m");
         System.out.println("  - Dequeued nodes: " + alt.getPrevPollCount());
         System.out.println("  - Drive time    : " + driveTimeToString(graph.getNodes()[endNodeNumber].getDriveTime()));
+
+        int count = 0;
+        for (int i = endNodeNumber; i != -1; i = graph.getNodes()[i].getPrevious()) {
+            count++;
+        }
+        System.out.println("  - Nodes in route: " + count);
     }
 
     private static String driveTimeToString(int time) {  
@@ -601,9 +611,9 @@ public class Main {
         time -= hours * 360000;
         int minutes = time / 6000;
         time -= minutes * 6000;
-        double seconds = time / 100.0;
+        int seconds = time / 100;
 
-        return String.format("%dh %dm %.2fs", hours, minutes, seconds);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     private static void printDriveTime(Node node) {   
